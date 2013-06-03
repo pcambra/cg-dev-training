@@ -1,0 +1,27 @@
+<?php
+
+/**
+ * Implements hook_entity_info().
+ */
+function commerce_sr_entity_info() {
+  $return = array();
+
+  $return['recommendation'] = array(
+    'label' => t('Recommendation'),
+    'entity class' => 'Entity',
+    'controller class' => 'EntityAPIController',
+    //'base table' => 'commerce_sr',
+    'module' => 'commerce_sr',
+    'fieldable' => TRUE,
+    'entity keys' => array(
+      'id' => 'id',
+      'bundle' => 'type',
+    ),
+    'bundles' => array(
+      'recommendation' => array('label' => 'Recommendation'),
+    ),
+  );
+
+
+  return $return;
+}

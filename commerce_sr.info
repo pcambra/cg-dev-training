@@ -1,0 +1,7 @@
+name = Commerce Simple Recommendation
+description = Simple Recommendation test
+package = Commerce (contrib)
+dependencies[] = commerce_product
+dependencies[] = commerce_cart
+dependencies[] = commerce_order
+core = 7.x
