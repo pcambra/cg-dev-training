@@ -1,0 +1,76 @@
+<?php
+
+/**
+ * Implements hook_schema().
+ */
+function commerce_sr_schema() {
+  $schema = array();
+
+  $schema['commerce_sr'] = array(
+    'description' => 'Base table for commerce recommendation items',
+
+    'fields' => array(
+      'id' => array(
+        'description' => 'The primary identifier for a recommendation entity, used internally only.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'type' => array(
+        'description' => 'The type (bundle) of this recurring entity.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'uid' => array(
+        'description' => 'The {users}.uid that created the recommendation entity.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'date' => array(
+        'description' => 'The Unix timestamp when the recommendation was created.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'product_id' => array(
+        'description' => 'The {commerce_product}.product_id associated with the recommendation entity.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'primary key' => array('id'),
+  );
+
+  return $schema;
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Create the table for commerce recommendation.
+ */
+function commerce_sr_update_7000(&$sandbox) {
+  $ret = array();
+
+  $schema = commerce_sr_schema();
+  db_create_table('commerce_sr', $schema['commerce_sr']);
+
+  return $ret;
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Add the price field
+ */
+function commerce_sr_update_7001(&$sandbox) {
+  $ret = array();
+
+  commerce_price_create_instance('recommendation_price', 'recommendation', 'recommendation', t('Price'));
+
+  return $ret;
+}

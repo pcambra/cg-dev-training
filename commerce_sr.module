@@ -10,7 +10,7 @@ function commerce_sr_entity_info() {
     'label' => t('Recommendation'),
     'entity class' => 'Entity',
     'controller class' => 'EntityAPIController',
-    //'base table' => 'commerce_sr',
+    'base table' => 'commerce_sr',
     'module' => 'commerce_sr',
     'fieldable' => TRUE,
     'entity keys' => array(
@@ -85,4 +85,20 @@ function commerce_sr_field_formatter_view($entity_type, $entity, $field, $instan
   }
 
   return $element;
+}
+
+/**
+ * Implements hook_commerce_cart_product_add().
+ *
+ * Creates a recommendation entity.
+ */
+function commerce_sr_commerce_cart_product_add($order, $product, $quantity, $line_item) {
+  $rec = entity_create('recommendation', array(
+    'type' => 'recommendation',
+    'uid' => $order->order_id,
+    'product_id' => $product->product_id,
+    'recommendation_price' => $product->commerce_price,
+    'date' => time(),
+  ));
+  $rec->save();
 }
