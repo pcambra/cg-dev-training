@@ -102,3 +102,19 @@ function commerce_sr_commerce_cart_product_add($order, $product, $quantity, $lin
   ));
   $rec->save();
 }
+
+/**
+ * Callback for getting recommendation properties.
+ * @see commerce_sr_entity_property_info()
+ */
+function commerce_sr_get_properties($rec, array $options, $name) {
+  switch ($name) {
+    case 'time_ago':
+      $datetime = new DateTime();
+      $datetime->setTimestamp($rec->date);
+      $now = new DateTime();
+      $interval = $datetime->diff($now);
+      return t('@time hours ago', array('@time' => $interval->format('%h')));
+      break;
+  }
+}

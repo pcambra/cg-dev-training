@@ -34,6 +34,15 @@ function commerce_sr_entity_property_info() {
     'setter callback' => 'entity_property_verbatim_set',
     'schema field' => 'date',
   );
+
+  $properties['time_ago'] = array(
+    'label' => t('Commerce recommendation time ago'),
+    'description' => t('Time ago the recommendation was created.'),
+    'type' => 'date',
+    'getter callback' => 'commerce_sr_get_properties',
+    'computed' => TRUE,
+  );
+
   $properties['uid'] = array(
     'label' => t('Creator ID'),
     'type' => 'user',
