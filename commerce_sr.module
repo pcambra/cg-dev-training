@@ -25,3 +25,64 @@ function commerce_sr_entity_info() {
 
   return $return;
 }
+
+/**
+ * Implements hook_field_formatter_info().
+ */
+function commerce_sr_field_formatter_info() {
+  return array(
+    'commerce_sr_no_decimals' => array(
+      'label' => t('Price with no decimal places'),
+      'field types' => array('commerce_price'),
+      'settings' => array(
+        'calculation' => TRUE,
+      ),
+    ),
+    'commerce_sr_amount_without_currency' => array(
+      'label' => t('Amount without currency'),
+      'field types' => array('commerce_price'),
+      'settings' => array(
+        'calculation' => FALSE,
+      ),
+    ),
+  );
+}
+
+
+/**
+ * Implements hook_field_formatter_view().
+ */
+function commerce_sr_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $element = array();
+  // Loop through each price value in this field.
+  foreach ($items as $delta => $item) {
+    // Do not render a price if the amount is NULL (i.e. non-zero empty value).
+    if (is_null($item['amount'])) {
+      continue;
+    }
+
+    // Theme the display of the price based on the display type.
+    switch ($display['type']) {
+      case 'commerce_sr_no_decimals':
+        $amount = commerce_currency_amount_to_decimal($item['amount'], $item['currency_code']);
+        $currency = commerce_currency_load($item['currency_code']);
+
+        $decimal_pos = strpos($amount, $currency['decimal_separator']);
+        $amount = commerce_currency_decimal_to_amount((int) substr($amount, 0, $decimal_pos), $item['currency_code']);
+
+        $markup = commerce_currency_format($amount , $item['currency_code']);
+
+        $element[$delta] = array(
+          '#markup' => $markup,
+        );
+      break;
+      case 'commerce_sr_amount_without_currency':
+        $element[$delta] = array(
+          '#markup' => commerce_currency_amount_to_decimal($item['amount'], $item['currency_code']),
+        );
+        break;
+    }
+  }
+
+  return $element;
+}
